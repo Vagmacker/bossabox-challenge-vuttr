@@ -4,7 +4,7 @@ export class Tool1590693613001 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
     await queryRunner.createTable(
       new Table({
-        name: 'lives',
+        name: 'tools',
         columns: [
           {
             name: 'id',

@@ -1,8 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'tools'})
 export class Tool {
+
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,4 +19,10 @@ export class Tool {
   @Column()
   @ApiProperty()
   description: string;
+
+  @Column()
+  tags: string;
+
+  @Column({ name: 'created_at' })
+  createdAt: Date
 }

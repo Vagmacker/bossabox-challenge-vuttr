@@ -1,6 +1,6 @@
 import { isEmpty } from './../utils/util';
 import { Tool } from './tool.entity';
-import { Repository, Connection, QueryRunner } from 'typeorm';
+import { Repository, Connection, QueryRunner, Like } from 'typeorm';
 import {
   Injectable,
   NotFoundException,
@@ -35,7 +35,10 @@ export class ToolsService {
    * Retorna todas as ferramentas da base de dados
    */
   async findAll(tag?: string): Promise<Tool[]> {
-    const tools: Tool[] = await this.toolsRepository.find({ where: { tag } });
+    const tools: Tool[] = await this.toolsRepository.find({
+      tags: Like(`%${tag}%`)
+    });
+
     return tools;
   }
 
@@ -61,6 +64,7 @@ export class ToolsService {
    */
   async save(tool: Tool): Promise<Tool> {
     let newTool: Tool;
+
     await this.dbConnection.connect();
     await this.dbConnection.startTransaction();
 

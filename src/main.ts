@@ -6,7 +6,10 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
  * Classe principal de configuração e inicialização da aplicação
  */
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: false });
+  const app = await NestFactory.create(AppModule, {
+    cors: false,
+    logger: ['debug', 'error', 'log', 'verbose', 'warn']
+  });
 
   const apiInfo = new DocumentBuilder()
     .setTitle('Challenge BossaBox - Rest API')

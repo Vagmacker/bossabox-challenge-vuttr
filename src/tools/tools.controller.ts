@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { ToolsService } from './tools.service';
+import { ToolTO } from './to/tool.to';
 
 /**
  * Classe de controle das requisições referente as Ferramentas.
@@ -35,8 +36,19 @@ export class ToolsController {
   @ApiResponse({ status: 404, description: 'Not Found' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiOperation({ summary: 'Recupera a lista de ferramentas' })
-  public async index(@Query('tag') query: string): Promise<Tool[]> {
-    return await this.toolService.findAll(query);
+  public async index(@Query('tag') query: string): Promise<ToolTO[]> {
+    const toolsTO: ToolTO[] = [];
+    const tools: Tool[] = await this.toolService.findAll(query);
+
+    tools.forEach(tool => {
+      toolsTO.push(Object.assign(tool))
+
+      toolsTO.forEach((toolTO: ToolTO, index: number) => {
+        toolTO.tags = tool.tags.split(',')
+      })
+    })
+
+    return toolsTO;
   }
 
   /**
@@ -48,8 +60,15 @@ export class ToolsController {
   @ApiResponse({ status: 200, description: 'Success' })
   @ApiResponse({ status: 404, description: 'Not Found' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  public async show(@Param('id') id: string): Promise<Tool> {
-    return await this.toolService.findOne(id);
+  public async show(@Param('id') id: string): Promise<ToolTO> {
+    let tooTO: ToolTO = new ToolTO();
+    const tool: Tool = await this.toolService.findOne(id);
+
+    tooTO = Object.assign(tool, tooTO);
+
+    tooTO.tags = tool.tags.split(',');
+
+    return tooTO;
   }
 
   /**
@@ -62,7 +81,11 @@ export class ToolsController {
   @ApiOperation({
     summary: 'Salva as informações da ferramenta conforme os critérios especificados na aplicação.'
   })
-  public async save(@Body() tool: Tool): Promise<Tool> {
+  public async save(@Body() toolTO: ToolTO): Promise<Tool> {
+    let tool: Tool = new Tool();
+    tool = Object.assign(toolTO, tool);
+    tool.tags = toolTO.tags.toString();
+
     return await this.toolService.save(tool);
   }
 
